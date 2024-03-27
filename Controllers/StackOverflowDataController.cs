@@ -1,16 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
+using Hammock;
+using StackOverflowRESTAPIProject.Models;
 using Newtonsoft.Json;
-using System.Net;
-using Microsoft.AspNetCore.WebUtilities;
 
 namespace StackOverflowRESTAPIProject.Controllers
 {
     public class StackOverflowDataController : ControllerBase
     {
-        static string stackOverflowAPIUrl = "https://api.stackexchange.com/tags?min=1000&site=stackoverflow";
-        readonly HttpClient client = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true });
-        readonly HttpResponse response = client.GetAsync(stackOverflowAPIUrl);
-        readonly HttpResponseStreamWriter streamResponse = response.Content.ReadAsStreamAsync();
+        static readonly string stackOverflowAPIUrl = "https://api.stackexchange.com/2.3/tags?";
+        private static HttpClient _httpClient = new();
+
+        [HttpGet]
+        public async Task<IActionResult> GetTag(string url)
+        {
+            url = $"{stackOverflowAPIUrl}min=1000&site=stackoverflow";
+            var tag = await _httpClient.GetAsync(url);
+            if (tag.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var content = await tag.Content.ReadAsStringAsync();
+                _ = JsonConvert.DeserializeObject<List<StackOverflowTag>>(content);
+            }
+            return Json(tag);
+        }
     }
 }

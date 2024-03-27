@@ -1,6 +1,6 @@
 @StackOverflowRESTAPIProject_HostAddress = http://localhost:5079
 
-GET {{StackOverflowRESTAPIProject_HostAddress}}/weatherforecast/
+GET {{StackOverflowRESTAPIProject_HostAddress}}/stackoverflowdata
 Accept: application/json
 
 ###

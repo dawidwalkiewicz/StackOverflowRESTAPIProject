@@ -14,24 +14,14 @@ namespace StackOverflowRESTAPIProject.Models
 
         protected StackOverflowTag() { }
 
-        /*public StackOverflowTag(string tagName, int tagCount, bool isModeratorOnly, bool hasSynonyms, bool isRequired, StackOverflowCollective stackOverflowCollectives)
+        public StackOverflowTag(string tagName, int tagCount, bool isModeratorOnly, bool hasSynonyms, bool isRequired, StackOverflowCollective stackOverflowCollectives)
         {
-            TagName = tagName;
+            TagName = tagName.ToLowerInvariant();
             TagCount = tagCount;
             IsModeratorOnly = isModeratorOnly;
             HasSynonyms = hasSynonyms;
             IsRequired = isRequired;
             StackOverflowCollectives = stackOverflowCollectives;
-        }*/
-        public StackOverflowTag(string json)
-        {
-            JObject jObject = JObject.Parse(json);
-            TagName = (string)jObject["name"];
-            TagCount = (int)jObject["count"];
-            IsModeratorOnly = (bool)jObject["is_moderator_only"];
-            HasSynonyms = (bool)jObject["has_synonyms"];
-            IsRequired = (bool)jObject["is_required"];
-            //StackOverflowCollectives = (StackOverflowCollective)jObject["collective"];
         }
     }
 }
