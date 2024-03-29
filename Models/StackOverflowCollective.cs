@@ -2,7 +2,6 @@
 {
     public class StackOverflowCollective
     {
-        private readonly StackOverflowExternalLink stackOverflowExternalLinks;
         public StackOverflowTag StackOverflowTags { get; set; }
         public StackOverflowExternalLink StackOverflowExternalLinks { get; set; }
         public string CollectiveDescription { get; set; }

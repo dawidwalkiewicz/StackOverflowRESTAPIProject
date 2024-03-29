@@ -4,8 +4,6 @@
     {
         public string ExternalLinkType { get; set; }
         public string ExternalLinkUrl { get; set; }
-        
-        protected StackOverflowExternalLink() { }
 
         public StackOverflowExternalLink(string externalLinkType, string externalLinkUrl)
         {

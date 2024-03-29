@@ -8,8 +8,6 @@
         public bool HasSynonyms { get; set; }
         public bool IsRequired { get; set; }
 
-        protected StackOverflowTag() { }
-
         public StackOverflowTag(string tagName, int tagCount, bool isModeratorOnly, bool hasSynonyms, bool isRequired)
         {
             TagName = tagName.ToLowerInvariant();

@@ -4,6 +4,8 @@ namespace StackOverflowRESTAPIProject.Repositories
 {
     public interface IWrapperCollection<TEntity> where TEntity : class
     {
+        public int Count { get; set; }
+
         [DataMember(Name = "items")]
         List<TEntity> Items { get; set; }
 
