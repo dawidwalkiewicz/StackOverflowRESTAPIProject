@@ -1,5 +1,5 @@
 @StackOverflowRESTAPIProject_HostAddress = http://localhost:5079
-@Path = /stackoverflowdata
+@Path = /stackoverflowdata/callback
 
 GET {{StackOverflowRESTAPIProject_HostAddress}}{{Path}}
 Accept: application/json

@@ -2,21 +2,20 @@
 {
     public class StackOverflowCollective
     {
+        private readonly StackOverflowExternalLink stackOverflowExternalLinks;
         public StackOverflowTag StackOverflowTags { get; set; }
         public StackOverflowExternalLink StackOverflowExternalLinks { get; set; }
         public string CollectiveDescription { get; set; }
-        public string LinkUrl { get; set; }
+        public string CollectiveLinkUrl { get; set; }
         public string CollectiveName { get; set; }
         public string CollectiveSlug { get; set; }
 
-        protected StackOverflowCollective() { }
-
-        public StackOverflowCollective(StackOverflowTag stackOverflowTags, StackOverflowExternalLink stackOverflowExternalLinks, string collectiveDescription, string linkUrl, string collectiveName, string collectiveSlug)
+        public StackOverflowCollective(StackOverflowTag stackOverflowTags, StackOverflowExternalLink stackOverflowExternalLinks, string collectiveDescription, string collectiveLinkUrl, string collectiveName, string collectiveSlug)
         {
-            StackOverflowTags = stackOverflowTags;
+            StackOverflowTags.TagName = stackOverflowTags.TagName;
             StackOverflowExternalLinks = stackOverflowExternalLinks;
             CollectiveDescription = collectiveDescription;
-            LinkUrl = linkUrl;
+            CollectiveLinkUrl = collectiveLinkUrl;
             CollectiveName = collectiveName;
             CollectiveSlug = collectiveSlug;
         }

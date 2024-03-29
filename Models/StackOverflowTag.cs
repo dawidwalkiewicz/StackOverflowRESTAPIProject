@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Diagnostics.CodeAnalysis;
-
-namespace StackOverflowRESTAPIProject.Models
+﻿namespace StackOverflowRESTAPIProject.Models
 {
     public class StackOverflowTag
     {
@@ -10,18 +7,16 @@ namespace StackOverflowRESTAPIProject.Models
         public bool IsModeratorOnly { get; set; }
         public bool HasSynonyms { get; set; }
         public bool IsRequired { get; set; }
-        public StackOverflowCollective StackOverflowCollectives { get; set; }
 
         protected StackOverflowTag() { }
 
-        public StackOverflowTag(string tagName, int tagCount, bool isModeratorOnly, bool hasSynonyms, bool isRequired, StackOverflowCollective stackOverflowCollectives)
+        public StackOverflowTag(string tagName, int tagCount, bool isModeratorOnly, bool hasSynonyms, bool isRequired)
         {
             TagName = tagName.ToLowerInvariant();
             TagCount = tagCount;
             IsModeratorOnly = isModeratorOnly;
             HasSynonyms = hasSynonyms;
             IsRequired = isRequired;
-            StackOverflowCollectives = stackOverflowCollectives;
         }
     }
 }

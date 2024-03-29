@@ -1,18 +1,16 @@
 ﻿using Hammock.Authentication.OAuth;
 using Hammock.Web;
 using Hammock;
-using System.Text;
 using System.Xml.Serialization;
-using System;
 using StackOverflowRESTAPIProject.DTO;
 
 namespace StackOverflowRESTAPIProject.Services
 {
     public class StackOverflowService
     {
-        private const string URL_BASE = "https://api.stackexchange.com/2.3/";
-        public static string ConsumerKey { get { return ConfigurationManager.AppSettings["ConsumerKey"]; } }
-        public static string ConsumerKeySecret { get { return ConfigurationManager.AppSettings["ConsumerSecret"]; } }
+        public const string URL_BASE = "https://api.stackexchange.com/2.3/";
+        public static string? ClientId { get { return System.Configuration.ConfigurationManager.AppSettings["client_id"]; } }
+        public static string? ClientSecret { get { return System.Configuration.ConfigurationManager.AppSettings["client_secret"]; } }
         public string AccessToken { get; set; }
         public string AccessTokenSecret { get; set; }
 
@@ -31,8 +29,8 @@ namespace StackOverflowRESTAPIProject.Services
                     Type = OAuthType.AccessToken,
                     SignatureMethod = OAuthSignatureMethod.HmacSha1,
                     ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
-                    ConsumerKey = ConsumerKey,
-                    ConsumerSecret = ConsumerKeySecret,
+                    ConsumerKey = ClientId,
+                    ConsumerSecret = ClientSecret,
                     Token = AccessToken,
                     TokenSecret = AccessTokenSecret
                 };
@@ -55,26 +53,26 @@ namespace StackOverflowRESTAPIProject.Services
             return client.Request(request);
         }
 
-        private T Deserialize<T>(string xmlContent)
+        private static T Deserialize<T>(string xmlContent)
         {
-            MemoryStream memoryStream = new MemoryStream(Encoding.ASCII.GetBytes(xmlContent));
-            using (var str = new StringReader(xmlContent))
-            {
-                var deserializer = new XmlSerializer(typeof(T));
-                return (T)deserializer.Deserialize(str);
-            }
+            //MemoryStream memoryStream = new(Encoding.ASCII.GetBytes(xmlContent));
+            using var str = new StringReader(xmlContent);
+            var deserializer = new XmlSerializer(typeof(T));
+            return (T)deserializer.Deserialize(str);
         }
 
         #endregion
 
-        #region StackOverflowTag Information
-
-        public StackOverflowTag GetCurrentUser()
+        public StackOverflowTag GetTags()
         {
-            var response = GetResponse("people/~");
+            var response = GetResponse("tags?min=1000&site=stackoverflow");
             return Deserialize<StackOverflowTag>(response.Content);
         }
 
-        #endregion
+        public StackOverflowCollective GetCollectives()
+        {
+            var response = GetResponse("collectives?min=1000&site=stackoverflow");
+            return Deserialize<StackOverflowCollective>(response.Content);
+        }
     }
 }

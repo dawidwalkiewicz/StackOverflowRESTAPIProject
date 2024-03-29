@@ -14,6 +14,6 @@ namespace StackOverflowRESTAPIProject.Models
         }
 
         public static StackOverflowData Create(DateOnly date, StackOverflowTag tag)
-            => new StackOverflowData(date, tag);
+            => new(date, tag);
     }
 }
