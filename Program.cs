@@ -9,7 +9,7 @@ builder.Logging.AddConsole();
 builder.Services.AddRequestDecompression();
 builder.Services.AddControllers();
 
-builder.Services.AddSingleton<StackOverflowService, StackOverflowService>();
+builder.Services.AddSingleton<IStackOverflowService, StackOverflowService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddRazorPages();
 
@@ -49,7 +49,7 @@ app.UseRequestDecompression();
 
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthorization();
+
 app.MapControllers();
 app.MapRazorPages();
 

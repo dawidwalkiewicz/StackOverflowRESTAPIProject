@@ -1,11 +1,12 @@
 ﻿using StackOverflowRESTAPIProject.DTO;
+using StackOverflowRESTAPIProject.Repositories;
 using System.Net;
 
 namespace StackOverflowRESTAPIProject.Services
 {
-    public class StackOverflowService
+    public class StackOverflowService : IStackOverflowService
     {
-        //todo: przenieść do pliku konfiguracyjnego appsettings.json i z niego tutaj oddczytać za pomocą wstrzyknietego IConfiguration
+        //todo: przenieść do pliku konfiguracyjnego appsettings.json i z niego tutaj odczytać za pomocą wstrzyknietego IConfiguration
         public const string URL_BASE = "https://api.stackexchange.com/2.3/";
 
         private List<KeyValuePair<string, TagItem>> _tagItemsCache = new();
@@ -60,7 +61,7 @@ namespace StackOverflowRESTAPIProject.Services
         }
 
 
-        public void CountTags()
+        public async Task CountTags()
         {
             //GetTags();
             double percentage = totalTags / totalItems * 100;
@@ -72,6 +73,8 @@ namespace StackOverflowRESTAPIProject.Services
             public bool HasMore { get; set; }
             public int QuotaMax { get; set; }
             public int QuotaRemaining { get; set; }
+            public int PageNumber { get; set; }
+            public int PageSize { get; set; }
         }
 
         public class TagItem : StackOverflowTag
@@ -81,8 +84,6 @@ namespace StackOverflowRESTAPIProject.Services
             public bool IsRequired { get; set; }
             public int Count { get; set; }
             public string Name { get; set; }
-            public int PageNumber { get; set; }
-            public int PageSize { get; set; }
         }
     }
 }

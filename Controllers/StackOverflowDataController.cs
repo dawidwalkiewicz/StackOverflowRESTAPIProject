@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using StackOverflowRESTAPIProject.Models;
 using StackOverflowRESTAPIProject.Services;
-using System.Text.Json;
 
 namespace StackOverflowRESTAPIProject.Controllers
 {
