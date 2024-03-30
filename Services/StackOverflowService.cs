@@ -1,65 +1,88 @@
-﻿using Hammock.Web;
-using Hammock;
-using System.Xml.Serialization;
-using StackOverflowRESTAPIProject.DTO;
-using Newtonsoft.Json;
+﻿using StackOverflowRESTAPIProject.DTO;
+using System.Net;
 
 namespace StackOverflowRESTAPIProject.Services
 {
     public class StackOverflowService
     {
+        //todo: przenieść do pliku konfiguracyjnego appsettings.json i z niego tutaj oddczytać za pomocą wstrzyknietego IConfiguration
         public const string URL_BASE = "https://api.stackexchange.com/2.3/";
+
+        private List<KeyValuePair<string, TagItem>> _tagItemsCache = new();
+        private readonly ILogger<StackOverflowService> _logger;
 
         double totalItems;
         double totalTags;
 
-        private static RestResponse GetResponse(string path)
+        public StackOverflowService(ILogger<StackOverflowService> logger = null)
         {
-            var client = new RestClient()
+            GetTagsFromApi(1000).Wait();
+            _logger = logger;
+        }
+
+        public async Task GetTagsFromApi(uint count)
+        {
+            var clientHandler = new HttpClientHandler
             {
-                Authority = URL_BASE,
-                Method = WebMethod.Get
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             };
 
-            var request = new RestRequest { Path = path };
-
-            return client.Request(request);
-        }
-
-        private static T Deserialize<T>(string xmlContent)
-        {
-            using var str = new StringReader(xmlContent);
-            var deserializer = new XmlSerializer(typeof(T));
-            return (T)deserializer.Deserialize(str);
-        }
-
-        public class ReadAndParseJsonFileWithNewtonsoftJson
-        {
-            private readonly string _sampleJsonFilePath;
-            public ReadAndParseJsonFileWithNewtonsoftJson(string sampleJsonFilePath)
+            using HttpClient client = new(clientHandler)
             {
-                _sampleJsonFilePath = sampleJsonFilePath;
-            }
+                BaseAddress = new Uri(URL_BASE)
+            };
 
-            public List<StackOverflowTag> UseUserDefinedObjectWithNewtonsoftJson()
+            var pageCount = count / 100;
+            var pageSize = 100;
+
+            for (uint page = 1; page <= pageCount; page++)
             {
-                using StreamReader reader = new(_sampleJsonFilePath);
-                var json = reader.ReadToEnd();
-                List<StackOverflowTag>? tags = JsonConvert.DeserializeObject<List<StackOverflowTag>>(json);
-                return tags;
+                var tags = await client.GetFromJsonAsync<Root>($"tags?page={page}&pagesize={pageSize}&site=stackoverflow");
+                if (tags is not null)
+                {
+                    _tagItemsCache = tags.Items.Select(tag => new KeyValuePair<string, TagItem>(tag.Name, tag)).ToList();
+                }
             }
         }
 
-        public StackOverflowTag GetTags()
+        public async Task<List<TagItem>?> GetTags(uint page = 1, uint pageSize = 100)
         {
-            var response = GetResponse("tags?min=1000&site=stackoverflow");
-            return Deserialize<StackOverflowTag>(response.Content);
+            if (pageSize > 100)
+            {
+                throw new ArgumentException("Page size cannot be greater than 100");
+            }
+
+            if (page < 1)
+            {
+                throw new ArgumentException("Page number cannot be less than 1");
+            }
+            return _tagItemsCache.Select(t => t.Value).ToList();
         }
+
 
         public void CountTags()
         {
-            GetTags();
+            //GetTags();
             double percentage = totalTags / totalItems * 100;
+        }
+
+        public class Root
+        {
+            public List<TagItem> Items { get; set; }
+            public bool HasMore { get; set; }
+            public int QuotaMax { get; set; }
+            public int QuotaRemaining { get; set; }
+        }
+
+        public class TagItem : StackOverflowTag
+        {
+            public bool HasSynonyms { get; set; }
+            public bool IsModeratorOnly { get; set; }
+            public bool IsRequired { get; set; }
+            public int Count { get; set; }
+            public string Name { get; set; }
+            public int PageNumber { get; set; }
+            public int PageSize { get; set; }
         }
     }
 }

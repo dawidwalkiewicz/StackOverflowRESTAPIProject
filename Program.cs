@@ -1,10 +1,18 @@
 using Microsoft.OpenApi.Models;
+using StackOverflowRESTAPIProject.Repositories;
+using StackOverflowRESTAPIProject.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
+builder.Services.AddRequestDecompression();
 builder.Services.AddControllers();
 
+builder.Services.AddSingleton<StackOverflowService, StackOverflowService>();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddRazorPages();
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -36,10 +44,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
+app.UseRequestDecompression();
 
 app.UseStaticFiles();
+app.UseRouting();
+app.UseAuthorization();
 app.MapControllers();
+app.MapRazorPages();
 
 app.Run();

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using StackOverflowRESTAPIProject.Models;
 using StackOverflowRESTAPIProject.Services;
-using System.Net.Http.Headers;
 using System.Text.Json;
 
 namespace StackOverflowRESTAPIProject.Controllers
@@ -10,30 +9,24 @@ namespace StackOverflowRESTAPIProject.Controllers
     [ApiController]
     public class StackOverflowDataController : ControllerBase
     {
+        private readonly StackOverflowService _stackOverflowService;
+
+        public StackOverflowDataController(StackOverflowService stackOverflowService)
+        {
+            _stackOverflowService = stackOverflowService;
+        }
+
         [HttpGet]
-        public IEnumerable<StackOverflowTag> Get()
+        public async Task<IActionResult> Get([FromQuery] uint page = 1, [FromQuery] uint pageSize = 100)
         {
-            return GetTags();
+            return Ok(await _stackOverflowService.GetTags(page, pageSize));
         }
 
-        private List<StackOverflowTag> GetTags()
+        [HttpGet("refill")]
+        public async Task<IActionResult> Refill([FromQuery] uint count = 1000)
         {
-            return new List<StackOverflowTag>();
-        }
-
-        [HttpPost]
-        [Produces("application/json")]
-        public StackOverflowTag Post([FromBody] StackOverflowTag stackOverflowTag)
-        {
-            string page = StackOverflowService.URL_BASE + "tags?min=1000&site=stackoverflow";
-
-            using HttpClient client = new();
-            using HttpResponseMessage response = client.GetAsync(page).Result;
-            using HttpContent content = response.Content;
-            string result = content.ReadAsStringAsync().Result;
-            using FileStream createStream = System.IO.File.Create(@"D:\Dokumenty\DoPracy\StackOverflowRESTAPIProject\stackoverflowdata.json");
-            JsonSerializer.SerializeAsync(createStream, result);
-            return new StackOverflowTag("javascript", 2528363, false, true, false);
+            await _stackOverflowService.GetTagsFromApi(count);
+            return Ok();
         }
     }
 }
