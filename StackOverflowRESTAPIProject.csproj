@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>.NETFramework,Version=v4.8.1</TargetFramework>
     <TargetFramework>.NETCoreApp,Version=v6.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
