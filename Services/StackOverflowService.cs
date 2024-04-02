@@ -1,4 +1,5 @@
-﻿using StackOverflowRESTAPIProject.DTO;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using StackOverflowRESTAPIProject.DTO;
 using StackOverflowRESTAPIProject.Repositories;
 using System.Net;
 
@@ -6,14 +7,10 @@ namespace StackOverflowRESTAPIProject.Services
 {
     public class StackOverflowService : IStackOverflowService
     {
-        //todo: przenieść do pliku konfiguracyjnego appsettings.json i z niego tutaj odczytać za pomocą wstrzyknietego IConfiguration
         public const string URL_BASE = "https://api.stackexchange.com/2.3/";
 
-        private List<KeyValuePair<string, TagItem>> _tagItemsCache = new();
+        private List<KeyValuePair<string, TagItem>> _tagItemsCache = [];
         private readonly ILogger<StackOverflowService> _logger;
-
-        double totalItems;
-        double totalTags;
 
         public StackOverflowService(ILogger<StackOverflowService> logger = null)
         {
@@ -46,7 +43,7 @@ namespace StackOverflowRESTAPIProject.Services
             }
         }
 
-        public async Task<List<TagItem>?> GetTags(uint page = 1, uint pageSize = 100)
+        public async Task<List<TagItem>?> GetTagsAsync(uint page = 1, uint pageSize = 100)
         {
             if (pageSize > 100)
             {
@@ -57,14 +54,16 @@ namespace StackOverflowRESTAPIProject.Services
             {
                 throw new ArgumentException("Page number cannot be less than 1");
             }
-            return _tagItemsCache.Select(t => t.Value).ToList();
+            return await Task.FromResult(_tagItemsCache.Select(t => t.Value).ToList());
         }
 
 
-        public async Task CountTags()
+        public async Task CountTags(uint tagsCount)
         {
-            //GetTags();
-            double percentage = totalTags / totalItems * 100;
+            var tags = GetTagsFromApi(tagsCount);
+            /*int quotaMax = tags.Contains("quota_max");
+            int quotaRemaining = Request.Url.AbsoluteUri.Contains("quota_remaining");
+            double percentage = quotaRemaining / quotaMax * 100;*/
         }
 
         public class Root

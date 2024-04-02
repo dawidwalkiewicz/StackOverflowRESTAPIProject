@@ -17,7 +17,7 @@ namespace StackOverflowRESTAPIProject.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] uint page = 1, [FromQuery] uint pageSize = 100)
         {
-            return Ok(await _stackOverflowService.GetTags(page, pageSize));
+            return Ok(await _stackOverflowService.GetTagsAsync(page, pageSize));
         }
 
         [HttpGet("refill")]
